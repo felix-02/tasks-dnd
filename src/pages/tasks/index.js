@@ -39,7 +39,7 @@ const Tasks = () => {
       <StyledWrapper>
         <TodaysTask todos={todos} />
         <PendingTasks />
-        <Abandoned />
+        <Abandoned todos={todos} />
         <Completed />
         <Inprogress />
       </StyledWrapper>

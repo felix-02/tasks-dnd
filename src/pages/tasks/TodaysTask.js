@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import Card from "../../components/Card";
 import Modal from "../../components/Modal";
-import { addTodos } from "../../redux/todoReducer";
+import { addTodos, editTodos } from "../../redux/todoReducer";
 
 import styled from "styled-components";
 
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+
+  & textarea {
+    resize: none;
+  }
   & .field {
     padding: 15px;
     margin-bottom: 20px;
@@ -37,29 +41,68 @@ const StyledAddIcon = styled.span`
   }
 `;
 
+const StyledBox = styled.div`
+  & > div {
+    display: flex;
+    justify-content: flex-end;
+    & button:not(:last-child) {
+      margin-right: 5px;
+    }
+    & button {
+      padding: 5px 10px;
+    }
+  }
+`;
+
 const TodaysTask = ({ todos }) => {
-  const [task, setTask] = useState({ name: "", description: "", priority: "" });
+  const [task, setTask] = useState({
+    name: "",
+    description: "",
+    priority: "",
+    id: "",
+  });
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
 
   const handleAddTask = (e) => {
     e.preventDefault();
-    dispatch(
-      addTodos({
-        name: task.name,
-        description: task.description,
-        priority: task.priority,
-        status: "active",
-      })
-    );
-    dispatch({
-      type: "SHOW_TOAST",
-      payload: {
-        visible: true,
-        message: "Task created successfully!",
-        background: "#5dbb36",
-      },
-    });
+    if (task.id) {
+      dispatch(
+        editTodos({
+          name: task.name,
+          description: task.description,
+          priority: task.priority,
+          status: "active",
+          id: task.id,
+        })
+      );
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          visible: true,
+          message: "Task edited successfully!",
+          background: "#5dbb36",
+        },
+      });
+    } else {
+      dispatch(
+        addTodos({
+          name: task.name,
+          description: task.description,
+          priority: task.priority,
+          status: "active",
+          id: new Date().getTime(),
+        })
+      );
+      dispatch({
+        type: "SHOW_TOAST",
+        payload: {
+          visible: true,
+          message: "Task created successfully!",
+          background: "#5dbb36",
+        },
+      });
+    }
     setTask({ name: "", description: "", priority: "" });
     setShowModal(false);
   };
@@ -70,6 +113,8 @@ const TodaysTask = ({ todos }) => {
       [e.target.name]: e.target.value,
     }));
   };
+
+  const todaysTodo = todos.filter((x) => x.status === "active");
   return (
     <div>
       <p>
@@ -80,12 +125,40 @@ const TodaysTask = ({ todos }) => {
       </p>
 
       <div>
-        {todos.map((itm, index) => (
+        {todaysTodo.map((itm, index) => (
           <Card key={index}>
-            <p>{itm.name}</p>
-            <p>{itm.description}</p>
-            <p>{itm.priority}</p>
-            <p>{itm.status}</p>
+            <StyledBox>
+              <p>{itm.name}</p>
+              <p>{itm.description}</p>
+              <p>{itm.priority}</p>
+              <p>{itm.id}</p>
+
+              <div>
+                <button
+                  onClick={() => {
+                    setShowModal(true);
+                    setTask(itm);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    dispatch({ type: "DELETE_TASK", payload: itm.id });
+                    dispatch({
+                      type: "SHOW_TOAST",
+                      payload: {
+                        visible: true,
+                        message: "Task deleted successfully!",
+                        background: "#5dbb36",
+                      },
+                    });
+                  }}
+                >
+                  delete
+                </button>
+              </div>
+            </StyledBox>
           </Card>
         ))}
       </div>
@@ -121,21 +194,38 @@ const TodaysTask = ({ todos }) => {
               value={task.priority}
               className="field"
             >
+              <option selected disabled hidden value="">
+                Select priority
+              </option>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
             <div>
               <button
+                type="button"
                 onClick={() => {
-                  setShowModal(false);
-                  setTask({ name: "", description: "", priority: "" });
+                  setTask((prev) => ({
+                    ...prev,
+                    name: "",
+                    description: "",
+                    priority: "",
+                  }));
                 }}
               >
                 Cancel
               </button>
 
-              <button type="submit">Submit</button>
+              <button
+                disabled={
+                  task.name === "" ||
+                  task.description === "" ||
+                  task.priority === ""
+                }
+                type="submit"
+              >
+                Submit
+              </button>
             </div>
           </StyledForm>
         </Modal>
