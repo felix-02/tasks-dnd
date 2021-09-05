@@ -147,7 +147,7 @@ const TaskForm = ({ dispatch, setShowModal, showModal }) => {
           disabled={submitting || task.name === "" || task.description === ""}
           type="submit"
         >
-          Submit
+          {submitting ? "Submitting..." : "Submit"}
         </button>
       </div>
     </StyledForm>

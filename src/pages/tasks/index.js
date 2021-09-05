@@ -79,6 +79,7 @@ const StyledMain = styled.main`
 
 const StyledCard = styled.div`
   padding: 1rem;
+  cursor: grab;
 
   background-color: #fff;
   border: 1px solid #f8f8f8;

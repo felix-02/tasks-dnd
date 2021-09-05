@@ -69,7 +69,7 @@ const DeleteTaskLayer = ({ setShowModal, dispatch, showModal }) => {
           cancel
         </button>
         <button disabled={submitting} onClick={deleteTaskHandler}>
-          delete
+          {submitting ? "Deleting..." : "Delete"}
         </button>
       </div>
     </StyledDeleteTaskWrapper>
