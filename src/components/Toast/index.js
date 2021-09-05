@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { hideToast } from "../../redux/toastReducer";
 
 const StyledWrapper = styled.div`
   position: absolute;
@@ -24,11 +25,15 @@ const Toast = () => {
   const toastData = useSelector((state) => state.toast);
 
   useEffect(() => {
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       dispatch({
         type: "HIDE_TOAST",
       });
     }, 2000);
+    return () => {
+      dispatch(hideToast());
+      clearTimeout(timer);
+    };
   }, [dispatch]);
 
   return (

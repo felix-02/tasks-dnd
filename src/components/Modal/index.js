@@ -1,8 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-// import "./modal.scss";
-// import Close from "./times-solid.svg";
-import styled from "styled-components";
+
+import styled, { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+body{
+  overflow:${({ show }) => show && "hidden"};
+}
+`;
 
 const StyledWrapper = styled.div`
   position: fixed;
@@ -23,6 +28,12 @@ const StyledWrapper = styled.div`
       background-color: #fff;
       padding: 2rem;
       border-radius: 20px;
+
+      @media (max-width: 768px) {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0px;
+      }
 
       backdrop-filter: blur(5px);
       box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
@@ -78,15 +89,18 @@ const Modal = ({ show, close, title, children }) => {
   return ReactDOM.createPortal(
     <>
       {show ? (
-        <StyledWrapper onClick={() => close()}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <header className="modal_header">
-              <h2 className="modal_header-title"> {title} </h2>
-              <span onClick={() => close()}>&#x2718;</span>
-            </header>
-            <main className="modal_content"> {children} </main>
-          </div>
-        </StyledWrapper>
+        <>
+          <StyledWrapper onClick={() => close()}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <header className="modal_header">
+                <h2 className="modal_header-title"> {title} </h2>
+                <span onClick={() => close()}>&#x2718;</span>
+              </header>
+              <main className="modal_content"> {children} </main>
+            </div>
+          </StyledWrapper>
+          <GlobalStyle show={show} />
+        </>
       ) : null}
     </>,
     document.getElementById("modal")
