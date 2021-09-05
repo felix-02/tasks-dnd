@@ -263,12 +263,12 @@ const Tasks = () => {
                         .filter((item) => item.status === category)
                         .filter(
                           (itm) =>
-                            itm.name.includes(
-                              searchTerm.toLowerCase().trim()
-                            ) ||
-                            itm.description.includes(
-                              searchTerm.toLowerCase().trim()
-                            )
+                            itm.name
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase().trim()) ||
+                            itm.description
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase().trim())
                         ).length
                     }
                     ){" "}
@@ -278,10 +278,12 @@ const Tasks = () => {
                       .filter((item) => item.status === category)
                       .filter(
                         (itm) =>
-                          itm.name.includes(searchTerm.toLowerCase().trim()) ||
-                          itm.description.includes(
-                            searchTerm.toLowerCase().trim()
-                          )
+                          itm.name
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase().trim()) ||
+                          itm.description
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase().trim())
                       )
                       .map((item) => (
                         <ListItem key={item.id} id={item.id}>

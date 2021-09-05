@@ -23,7 +23,7 @@ const StyledForm = styled.form`
     border-radius: 5px;
     border: 1px solid #c7c7c7;
   }
-  & button:hover {
+  & button:first-child:hover {
     cursor: pointer;
   }
   & button:not(:last-child) {
@@ -32,6 +32,15 @@ const StyledForm = styled.form`
   & > div {
     text-align: right;
   }
+  & .submit-btn {
+    background: ;
+  }
+`;
+
+const StyledSubmitbutton = styled.button`
+  background: ${(props) => (props.disabled ? "#c8c8c8" : "#00C851")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  color: #fff;
 `;
 
 const TaskForm = ({ dispatch, setShowModal, showModal }) => {
@@ -49,8 +58,8 @@ const TaskForm = ({ dispatch, setShowModal, showModal }) => {
     let url;
     let method;
     let payload = {
-      name: task.name,
-      description: task.description,
+      name: task.name.trim(),
+      description: task.description.trim(),
       status: task.status || "Todays Tasks",
     };
 
@@ -66,14 +75,14 @@ const TaskForm = ({ dispatch, setShowModal, showModal }) => {
       dispatch(
         task.id
           ? editTask({
-              name: task.name,
-              description: task.description,
+              name: task.name.trim(),
+              description: task.description.trim(),
               status: task.status,
               id: task.id,
             })
           : addTask({
-              name: task.name,
-              description: task.description,
+              name: task.name.trim(),
+              description: task.description.trim(),
               status: "Todays Tasks",
               id: data.name,
             })
@@ -143,12 +152,12 @@ const TaskForm = ({ dispatch, setShowModal, showModal }) => {
           Cancel
         </button>
 
-        <button
+        <StyledSubmitbutton
           disabled={submitting || task.name === "" || task.description === ""}
           type="submit"
         >
           {submitting ? "Submitting..." : "Submit"}
-        </button>
+        </StyledSubmitbutton>
       </div>
     </StyledForm>
   );
