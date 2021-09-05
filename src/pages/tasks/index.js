@@ -60,6 +60,17 @@ const StyledMain = styled.main`
     height: 10vh;
     display: flex;
     align-items: center;
+    & input {
+      margin-left: auto;
+      padding: 10px;
+      border: 1px solid #f8f8f8;
+    }
+    & span {
+      margin-left: 10px;
+    }
+    & span:hover {
+      cursor: pointer;
+    }
   }
   & > div {
     height: 90vh;
@@ -69,7 +80,7 @@ const StyledMain = styled.main`
 const StyledCard = styled.div`
   padding: 1rem;
 
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #f8f8f8;
   border-radius: 5px;
   margin: 1rem;
@@ -126,7 +137,7 @@ const Tasks = () => {
   });
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  //   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const tasks = useSelector((state) => state.task);
 
@@ -204,11 +215,17 @@ const Tasks = () => {
     <StyledMain>
       <header>
         <h1>Task Management</h1>
-        {/* <input
+        <input
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           type="text"
-        /> */}
+          placeholder="Search tasks..."
+        />
+        {searchTerm && (
+          <span onClick={() => setSearchTerm("")}>
+            <i class="far fa-times-circle"></i>
+          </span>
+        )}
       </header>
       {loading ? (
         <StyledLoaderContainer>
@@ -217,16 +234,14 @@ const Tasks = () => {
       ) : (
         <DndProvider backend={HTML5Backend}>
           <StyledSection>
-            {columns.map((channel) => (
+            {columns.map((category) => (
               <ListColumn
-                key={channel}
-                status={channel}
+                key={category}
+                status={category}
                 changeTaskStatus={changeTaskStatus}
               >
                 <div className="column-container">
                   <div className="column-head">
-                    {channel} (
-                    {tasks.filter((item) => item.status === channel).length}){" "}
                     <span
                       className="add-task"
                       onClick={() =>
@@ -237,14 +252,36 @@ const Tasks = () => {
                         })
                       }
                     >
-                      {channel === "Todays Tasks" && (
+                      {category === "Todays Tasks" && (
                         <i className="fas fa-plus fa-sm"></i>
                       )}{" "}
                     </span>
+                    {category} (
+                    {
+                      tasks
+                        .filter((item) => item.status === category)
+                        .filter(
+                          (itm) =>
+                            itm.name.includes(
+                              searchTerm.toLowerCase().trim()
+                            ) ||
+                            itm.description.includes(
+                              searchTerm.toLowerCase().trim()
+                            )
+                        ).length
+                    }
+                    ){" "}
                   </div>
                   <StyledCardsWrapper>
                     {tasks
-                      .filter((item) => item.status === channel)
+                      .filter((item) => item.status === category)
+                      .filter(
+                        (itm) =>
+                          itm.name.includes(searchTerm.toLowerCase().trim()) ||
+                          itm.description.includes(
+                            searchTerm.toLowerCase().trim()
+                          )
+                      )
                       .map((item) => (
                         <ListItem key={item.id} id={item.id}>
                           <StyledCard>
